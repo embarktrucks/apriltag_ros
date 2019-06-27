@@ -44,6 +44,7 @@
 #define APRILTAG_ROS_CONTINUOUS_DETECTOR_H
 
 #include "apriltag_ros/common_functions.h"
+#include <utils/ros/message_filters.h>
 
 #include <memory>
 
@@ -54,21 +55,23 @@ namespace apriltag_ros
 
 class ContinuousDetector: public nodelet::Nodelet
 {
- public:
+ private:
+  typedef PollRecentSubscriber<sensor_msgs::CameraInfo::ConstPtr> PolledCameraInfoMsg;
+
+public:
    ContinuousDetector();
   void onInit();
 
-  void imageCallback(const sensor_msgs::ImageConstPtr& image_rect,
-                     const sensor_msgs::CameraInfoConstPtr& camera_info);
+  void imageCallback(const sensor_msgs::ImageConstPtr& image_rect);
 
  private:
   std::shared_ptr<TagDetector> tag_detector_;
   bool draw_tag_detections_image_;
   cv_bridge::CvImagePtr cv_image_;
+  boost::shared_ptr<PolledCameraInfoMsg> camera_info_sub_;
 
-  std::shared_ptr<image_transport::ImageTransport> it_;
-  image_transport::CameraSubscriber camera_image_subscriber_;
-  image_transport::Publisher tag_detections_image_publisher_;
+  ros::Subscriber camera_image_subscriber_;
+  ros::Publisher tag_detections_image_publisher_;
   ros::Publisher tag_detections_publisher_;
 };
 

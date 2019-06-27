@@ -50,24 +50,32 @@ void ContinuousDetector::onInit ()
   tag_detector_ = std::shared_ptr<TagDetector>(new TagDetector(pnh));
   draw_tag_detections_image_ = getAprilTagOption<bool>(pnh, 
       "publish_tag_detections_image", false);
-  it_ = std::shared_ptr<image_transport::ImageTransport>(
-      new image_transport::ImageTransport(nh));
+
+  std::string input_image_topic = "/cam3/image_rect_color";
+  std::string input_camera_info_topic = "/cam3/camera_info";
+
+  camera_info_sub_ = boost::shared_ptr<PolledCameraInfoMsg>(new PolledCameraInfoMsg(&pnh, input_camera_info_topic, 1));
 
   camera_image_subscriber_ =
-      it_->subscribeCamera("image_rect", 1,
-                          &ContinuousDetector::imageCallback, this);
+      pnh.subscribe(input_image_topic, 1, &ContinuousDetector::imageCallback, this);
+
   tag_detections_publisher_ =
-      nh.advertise<AprilTagDetectionArray>("tag_detections", 1);
+      pnh.advertise<AprilTagDetectionArray>("tag_detections", 1);
   if (draw_tag_detections_image_)
   {
-    tag_detections_image_publisher_ = it_->advertise("tag_detections_image", 1);
+    tag_detections_image_publisher_ = pnh.advertise<sensor_msgs::Image>("tag_detections_image", 1);
   }
 }
 
-void ContinuousDetector::imageCallback (
-    const sensor_msgs::ImageConstPtr& image_rect,
-    const sensor_msgs::CameraInfoConstPtr& camera_info)
+void ContinuousDetector::imageCallback (const sensor_msgs::ImageConstPtr& image_rect)
 {
+  auto camera_info_msg_opt = camera_info_sub_->most_recent();
+  if(!camera_info_sub_){
+    // we need camera info for the detection
+    return;
+  }
+  auto camera_info = camera_info_msg_opt.get();
+
   // Convert ROS's sensor_msgs::Image to cv_bridge::CvImagePtr in order to run
   // AprilTag 2 on the iamge
   try
