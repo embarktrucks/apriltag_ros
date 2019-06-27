@@ -51,7 +51,7 @@ void ContinuousDetector::onInit ()
   draw_tag_detections_image_ = getAprilTagOption<bool>(pnh, 
       "publish_tag_detections_image", false);
 
-  std::string input_image_topic = "/cam3/image_rect_color";
+  std::string input_image_topic = "/cam3/image_raw";
   std::string input_camera_info_topic = "/cam3/camera_info";
 
   camera_info_sub_ = boost::shared_ptr<PolledCameraInfoMsg>(new PolledCameraInfoMsg(&pnh, input_camera_info_topic, 1));
