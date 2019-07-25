@@ -51,8 +51,17 @@ void ContinuousDetector::onInit ()
   draw_tag_detections_image_ = getAprilTagOption<bool>(pnh, 
       "publish_tag_detections_image", false);
 
-  std::string input_image_topic = "/cam3/image_raw";
-  std::string input_camera_info_topic = "/cam3/camera_info";
+  std::string input_image_topic;
+  if(!nh.getParam("image_topic", input_image_topic)){
+    ROS_ERROR("could not get rosparam image_topic");
+    return;
+  }
+
+  std::string input_camera_info_topic;
+  if(!nh.getParam("camera_info_topic", input_camera_info_topic)){
+    ROS_ERROR("could not get rosparam image frame");
+    return;
+  }
 
   camera_info_sub_ = boost::shared_ptr<PolledCameraInfoMsg>(new PolledCameraInfoMsg(&pnh, input_camera_info_topic, 1));
 
@@ -91,7 +100,7 @@ void ContinuousDetector::imageCallback (const sensor_msgs::ImageConstPtr& image_
 
   // Publish detected tags in the image by AprilTag 2
   tag_detections_publisher_.publish(
-      tag_detector_->detectTags(cv_image_,camera_info));
+      tag_detector_->detectTags(cv_image_, camera_info));
 
   // Publish the camera image overlaid by outlines of the detected tags and
   // their payload values
