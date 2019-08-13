@@ -52,14 +52,14 @@ void ContinuousDetector::onInit ()
       "publish_tag_detections_image", false);
 
   std::string input_image_topic;
-  if(!nh.getParam("image_topic", input_image_topic)){
+  if(!pnh.getParam("image_topic", input_image_topic)){
     ROS_ERROR("could not get rosparam image_topic");
     return;
   }
 
   //std::string input_camera_info_topic = "/cam3/camera_info";
   std::string input_camera_info_topic;
-  if(!nh.getParam("camera_info_topic", input_camera_info_topic)){
+  if(!pnh.getParam("camera_info_topic", input_camera_info_topic)){
     ROS_ERROR("could not get rosparam image frame");
     return;
   }
