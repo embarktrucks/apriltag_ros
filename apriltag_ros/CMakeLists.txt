@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(apriltag_ros)
 
+find_program(CCACHE_FOUND ccache)
+if (CCACHE_FOUND)
+set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
 find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   cv_bridge
