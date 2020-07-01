@@ -56,13 +56,13 @@ namespace apriltag_ros
 class ContinuousDetector: public nodelet::Nodelet
 {
  private:
-  typedef PollRecentSubscriber<sensor_msgs::CameraInfo::ConstPtr> PolledCameraInfoMsg;
+  typedef PollRecentSubscriber<sensor_msgs::CameraInfo> PolledCameraInfoMsg;
 
 public:
    ContinuousDetector();
   void onInit();
 
-  void imageCallback(const sensor_msgs::ImageConstPtr& image_rect);
+  void imageCallback(const sensor_msgs::Image::ConstPtr& image_rect);
 
  private:
   std::shared_ptr<TagDetector> tag_detector_;
