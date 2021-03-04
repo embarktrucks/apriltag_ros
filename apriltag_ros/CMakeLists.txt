@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf
-  utils
+  utils_ros
 )
 
 find_package(Eigen3 REQUIRED)
@@ -95,7 +95,7 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-  ${utils_INCLUDE_DIRS}
+  ${utils_ros_INCLUDE_DIRS}
   ${apriltag_INCLUDE_DIRS}
 )
 
